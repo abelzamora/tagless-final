@@ -3,7 +3,7 @@ package es.hablapps.auth
 import cats.data.State
 import cats.implicits._
 import es.hablapps.shapelessext._
-import es.hablapps.auth.domain.auth.{AuthnError, RegistrationError}
+import es.hablapps.auth.domain.auth.{AuthnError, GetError, RegistrationError}
 import es.hablapps.shared.domain.{EmailAddress, User}
 import shapeless.tag.@@
 
@@ -14,6 +14,9 @@ trait Dsl[F[_]]{
 
   def authn(email: String @@ EmailAddress, password: String):
       F[Either[AuthnError, User]]
+
+  def getUser(email: String @@ EmailAddress):
+      F[Either[GetError, User]]
 }
 
 object DslList {
@@ -38,6 +41,12 @@ object DslList {
       State.inspect(_
                       .find(user => user.email === email && user.password === password)
                       .toRight(AuthnError("Authentication failed")))
+
+    override def getUser(email: String @@ EmailAddress):
+        UserRepositoryState[Either[GetError, User]] =
+      State.inspect(_
+      .find(user => user.email === email)
+      .toRight(GetError("User not found")))
   }
 }
 
@@ -62,5 +71,11 @@ object DslStream {
       State.inspect(_
                       .find(user => user.email === email && user.password === password)
     .toRight(AuthnError("Authentication failed in Stream")))
+
+    override def getUser(email: String @@ EmailAddress):
+    UserRepositoryStateStream[Either[GetError, User]] =
+      State.inspect(_
+        .find(user => user.email === email)
+        .toRight(GetError("User not found")))
   }
 }

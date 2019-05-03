@@ -1,7 +1,8 @@
 import sbt._
 
 object Dependencies {
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
-  lazy val cats = "org.typelevel" %% "cats-core" % "1.0.1"
+  lazy val catsCore = "org.typelevel" %% "cats-core" % "1.6.0"
+  lazy val catsEffect = "org.typelevel" %% "cats-effect" % "1.2.0"
   lazy val shapeless = "com.chuusai" %% "shapeless" % "2.3.3"
+  lazy val specs2 = "org.specs2" %% "specs2-core" % "4.3.4"
 }

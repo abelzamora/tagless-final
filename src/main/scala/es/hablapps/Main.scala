@@ -2,11 +2,11 @@ package es.hablapps
 
 import cats.Monad
 import cats.implicits._
-import es.hablapps.auth.domain.auth.AuthnError
+import es.hablapps.auth.domain.auth.{AuthnError, GetError}
 import es.hablapps.auth.{Dsl => AuthnDsl}
 import es.hablapps.shared.domain.{EmailAddress, User}
-
 import shapeless.tag
+import shapeless.tag.@@
 
 import scala.language.higherKinds
 
@@ -25,22 +25,11 @@ object Main extends App {
 
   }
 
-    import es.hablapps.auth.DslList._
+  def getUser[F[_]: Monad](email: String @@ EmailAddress)(implicit authnDsl: AuthnDsl[F]):
+    F[Either[GetError, User]] =
+      for {
+        user <- authnDsl.getUser(email)
+      } yield user
 
-    val userRepositoryState = registerAndLogin[UserRepositoryState]
-    val result = userRepositoryState.runEmpty
-    val (users, authenticated) = result.value
-
-    println(s"Authenticated: $authenticated")
-    println(s"Registered users: $users")
-
-    import es.hablapps.auth.DslStream._
-
-    val userRepositoryStateStream = registerAndLogin[UserRepositoryStateStream]
-    val resultStream = userRepositoryStateStream.runEmpty
-    val (usersStream, authenticatedStream) = resultStream.value
-
-    println(s"AuthenticatedStream: $authenticated")
-    println(s"Registered users Stream: $usersStream")
 
 }

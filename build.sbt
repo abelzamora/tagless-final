@@ -8,9 +8,6 @@ lazy val root = (project in file("."))
     scalaVersion  := "2.12.8",
     version       := "1.0.0-SNAPSHOT",
     Defaults.itSettings,
-    test in Test := {
-      val _ = (g8Test in Test).toTask("").value
-    },
     scalacOptions += "-Ypartial-unification",
     scriptedLaunchOpts ++= List(
       "-Xms1024m",
@@ -23,9 +20,9 @@ lazy val root = (project in file("."))
       url("http://repo.typesafe.com/typesafe/ivy-releases/")
     )(Resolver.ivyStylePatterns),
     libraryDependencies ++= Seq(
-      cats,
+      catsCore,
+      catsEffect,
       shapeless,
-      scalaTest % Test
-    ),
-    ensimeIgnoreScalaMismatch in ThisBuild := true
+      specs2 % Test
+    )
   )
